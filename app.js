@@ -16,7 +16,7 @@
     /* ═══════════ CONFIGURACIÓN ═══════════ */
     const CONFIG = {
         // Código de país + número, sin "+" ni espacios. Ej. México: 5215512345678
-        phone: '520000000000'
+        phone: '5214491125755'
     };
 
     /* ═══════════ UTILIDADES ═══════════ */

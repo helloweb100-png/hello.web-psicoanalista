@@ -588,6 +588,33 @@ html:not(.js-marquee) .mq-alt .mq-track { animation-direction: reverse; animatio
 .why-item p { font-family: var(--ff-d); font-size: clamp(1.65rem, 4.2vw, 2.9rem); line-height: 1.14; text-wrap: pretty; }
 .why-item em { color: var(--royal); }
 
+/* ─────────────── 13b · SOBRE MÍ ─────────────── */
+.about { position: relative; padding: clamp(4rem, 9vw, 8rem) 0 clamp(3rem, 7vw, 6rem); background: var(--paper); }
+.about-grid { display: grid; gap: 2.6rem; }
+.about-aside { display: grid; gap: 1.4rem; justify-items: start; align-self: start; }
+.about-id {
+    display: inline-flex; align-items: center; gap: .9rem; padding: .65rem 1.15rem; border-radius: 999px;
+    background: #fff; border: 1px solid var(--line); box-shadow: 0 14px 34px -24px rgba(10, 31, 120, .4);
+}
+.about-id span { font-family: var(--ff-m); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.about-id strong { font-family: var(--ff-m); font-size: .95rem; font-weight: 500; letter-spacing: .06em; color: var(--royal-deep); }
+.about-main { display: grid; gap: clamp(2.4rem, 5vw, 3.6rem); }
+.about-h { margin-bottom: 1.1rem; font-family: var(--ff-m); font-size: .72rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--royal); }
+.creds { list-style: none; }
+.creds li { display: flex; gap: 1rem; align-items: flex-start; padding: 1.15rem 0; border-top: 1px solid var(--line); }
+.creds li:last-child { border-bottom: 1px solid var(--line); }
+.cred-ico { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--mint-tint); color: var(--royal); }
+.creds strong { display: block; font-family: var(--ff-d); font-weight: 400; font-size: clamp(1.3rem, 2.4vw, 1.65rem); line-height: 1.15; text-wrap: balance; }
+.cred-by { display: block; margin-top: .4rem; font-size: .92rem; color: var(--ink-2); }
+.cred-tag {
+    display: inline-block; margin-left: .45rem; padding: .18rem .65rem; border-radius: 999px; vertical-align: middle;
+    font-family: var(--ff-m); font-size: .6rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--royal-deep); background: var(--ice); border: 1px solid rgba(23, 67, 214, .14);
+}
+.ap-grid { display: grid; gap: 1rem; }
+.b-card.ap-card { gap: .7rem; padding: 1.4rem 1.5rem; }
+.b-card.ap-card h3 { font-size: clamp(1.4rem, 2.2vw, 1.75rem); }
+
 /* ─────────────── 14 · ESPECIALIDADES ─────────────── */
 .spec { position: relative; padding: clamp(4rem, 9vw, 8rem) 0 clamp(5rem, 10vw, 8rem); background: linear-gradient(180deg, var(--paper), var(--ice)); }
 .bento { display: grid; gap: 1rem; }
@@ -828,6 +855,8 @@ body.tone-dark #depth { color: #fff; }
     :root { --header-h: 84px; }
     .compare { grid-template-columns: 1fr 1fr; }
     .bento { grid-template-columns: repeat(2, 1fr); }
+    .ap-grid { grid-template-columns: repeat(2, 1fr); }
+    .ap-grid .ap-card:last-child { grid-column: 1 / -1; }
     .hd-pill .hd-cta { display: inline-flex; }
     .review { grid-template-columns: auto 1fr auto; gap: 1.6rem; padding: 1.6rem 2rem; }
     .gauge ul { display: block; }
@@ -864,6 +893,9 @@ body.tone-dark #depth { color: #fff; }
     .why-grid { grid-template-columns: .85fr 1.15fr; gap: 5rem; }
     .why-aside { position: sticky; top: calc(var(--header-h) + 2rem); }
     .why-item { min-height: 52svh; }
+
+    .about-grid { grid-template-columns: .85fr 1.15fr; gap: 5rem; }
+    .about-aside { position: sticky; top: calc(var(--header-h) + 2rem); }
 
     .bento { grid-template-columns: repeat(12, 1fr); }
     .b-a { grid-column: span 7; }
