@@ -318,6 +318,119 @@
         gsap.fromTo('.ft-mark span', { yPercent: 35 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '#footer', start: 'top bottom', end: 'bottom bottom', scrub: true } });
     }
 
+    /* ═══════════ OPINIONES ═══════════ */
+    /* Las tarjetas de #resultados se reparten en filas (3 en escritorio, 2 en móvil/tablet) que pasan solas.
+       La velocidad sube con el scroll y las filas también se desplazan al hacer scroll; se detienen al pasar el cursor. */
+    const Ops = { rows: [], visible: false, width: 0, autos: [] };
+
+    function initOpinions() {
+        const sec = $('#resultados');
+        const wrap = sec && $('.ops-rows', sec);
+        if (!wrap) return;
+        const cards = $$('.op-card', wrap);
+
+        // Tamaño según la longitud + botón para leer la opinión completa
+        cards.forEach(card => {
+            const text = $('.op-text', card);
+            const n = text.textContent.trim().length;
+            card.dataset.len = n;
+            card.classList.toggle('is-wide', n > 300);
+            const btn = document.createElement('button');
+            btn.type = 'button'; btn.className = 'op-more'; btn.textContent = 'Leer opinión completa';
+            text.after(btn);
+        });
+
+        const build = () => {
+            Ops.autos = Ops.rows.map(r => r.auto);
+            const desk = matchMedia('(min-width: 1024px)').matches;
+            const count = desk ? 3 : 2;
+            const speeds = desk ? [46, 38, 52] : [34, 28];
+            Ops.width = innerWidth;
+
+            // Reparto "serpiente": las opiniones largas y cortas quedan equilibradas entre filas
+            const byLen = cards.map((c, i) => i).sort((a, b) => cards[b].dataset.len - cards[a].dataset.len);
+            const buckets = Array.from({ length: count }, () => []);
+            byLen.forEach((idx, k) => {
+                const round = Math.floor(k / count), pos = k % count;
+                buckets[round % 2 ? count - 1 - pos : pos].push(idx);
+            });
+
+            wrap.replaceChildren();
+            wrap.classList.add('is-built');
+            wrap.classList.toggle('is-static', reduceMotion);
+            cards.forEach(c => c.classList.remove('is-clipped'));
+
+            Ops.rows = buckets.map((idxs, r) => {
+                const row = document.createElement('div'), lane = document.createElement('div'), set = document.createElement('div');
+                row.className = 'op-row'; lane.className = 'op-lane'; set.className = 'op-set';
+                idxs.sort((a, b) => a - b).forEach(i => set.append(cards[i]));
+                lane.append(set); row.append(lane); wrap.append(row);
+                return { row, lane, set, dir: r % 2 ? 1 : -1, speed: speeds[r], k: 0.22, auto: Ops.autos[r] || r * 260, hold: 1, pause: false, W: 0 };
+            });
+
+            // ¿Qué opiniones quedan recortadas? (se mide con las tarjetas ya en su fila)
+            cards.forEach(c => {
+                const t = $('.op-text', c);
+                c.classList.toggle('is-clipped', t.scrollHeight > t.clientHeight + 2);
+            });
+
+            Ops.rows.forEach(r => {
+                r.W = r.set.getBoundingClientRect().width;
+                if (reduceMotion || !r.W) return;
+                // Copias del conjunto para que el bucle no tenga huecos
+                const copies = Math.ceil(innerWidth / r.W) + 1;
+                for (let i = 0; i < copies; i++) {
+                    const clone = r.set.cloneNode(true);
+                    clone.setAttribute('aria-hidden', 'true');
+                    $$('.op-more', clone).forEach(b => { b.tabIndex = -1; });
+                    r.lane.append(clone);
+                }
+                r.row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') r.pause = true; });
+                r.row.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') r.pause = false; });
+                r.row.addEventListener('focusin', () => { r.pause = true; });
+                r.row.addEventListener('focusout', () => { r.pause = false; });
+                let held;
+                r.row.addEventListener('touchstart', () => { clearTimeout(held); r.pause = true; }, { passive: true });
+                r.row.addEventListener('touchend', () => { held = setTimeout(() => { r.pause = false; }, 1600); }, { passive: true });
+            });
+        };
+
+        // Ventana con la opinión completa
+        const modal = $('#op-modal', sec), body = $('.op-modal-body', modal);
+        wrap.addEventListener('click', e => {
+            const btn = e.target.closest('.op-more');
+            if (!btn || !modal.showModal) return;
+            body.replaceChildren();
+            [...btn.closest('.op-card').children].filter(el => !el.matches('.op-more')).forEach(el => body.append(el.cloneNode(true)));
+            root.classList.add('modal-open');
+            if (state.lenis) state.lenis.stop();
+            modal.showModal();
+        });
+        $('.op-modal-x', modal).addEventListener('click', () => modal.close());
+        modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+        modal.addEventListener('close', () => {
+            root.classList.remove('modal-open');
+            if (state.lenis && state.ready) state.lenis.start();
+        });
+
+        build();
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+        onResize(() => { if (innerWidth !== Ops.width) build(); });
+        new IntersectionObserver(([e]) => { Ops.visible = e.isIntersecting; }, { rootMargin: '160px 0px' }).observe(wrap);
+
+        Loop.add((t, dt) => {
+            if (!Ops.visible || reduceMotion) return;
+            const sy = window.scrollY, boost = Math.abs(state.vel) * 22;
+            Ops.rows.forEach(r => {
+                if (!r.W) return;
+                r.hold = lerp(r.hold, r.pause ? 0 : 1, 1 - Math.pow(0.003, dt));
+                r.auto += (r.speed + boost) * r.hold * dt;
+                const p = (((r.auto + sy * r.k) % r.W) + r.W) % r.W;
+                r.lane.style.transform = `translate3d(${(r.dir < 0 ? -p : p - r.W).toFixed(1)}px,0,0)`;
+            });
+        });
+    }
+
     /* ═══════════ HEADER · MENÚ · ANCLAS ═══════════ */
     function initHeader() {
         const header = $('#header'), burger = $('#burger'), menu = $('#menu');
@@ -392,8 +505,8 @@
                 const dark = mid.dataset.tone === 'dark';
                 state.toneTarget = dark ? 1 : 0;
                 document.body.classList.toggle('tone-dark', dark);
-                // En el océano ya hay un medidor propio: se atenúa el global para no duplicar
-                if (depthEl) depthEl.classList.toggle('is-muted', mid.id === 'oceano');
+                // En el océano ya hay un medidor propio, y en las opiniones el medidor taparía el texto: se atenúa el global
+                if (depthEl) depthEl.classList.toggle('is-muted', mid.id === 'oceano' || mid.id === 'resultados');
             }
 
             // Profundidad: interpola entre la profundidad de cada sección
@@ -867,6 +980,7 @@ void main(){
         initReveals();
         initHeader();
         initLoader();
+        initOpinions();
         initGSAP();
         initScrollState();
         initMarquee();
