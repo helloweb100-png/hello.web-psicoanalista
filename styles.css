@@ -713,6 +713,24 @@ html:not(.js-marquee) .mq-alt .mq-track { animation-direction: reverse; animatio
 .tl-item h3 { font-family: var(--ff-d); font-weight: 400; font-size: clamp(1.7rem, 3.4vw, 2.3rem); line-height: 1.1; }
 .tl-item p { color: var(--ink-2); max-width: 30em; }
 
+/* ─────────────── 17b · RESULTADOS ─────────────── */
+.results { position: relative; padding: clamp(1rem, 3vw, 2rem) 0 clamp(2.5rem, 5vw, 4rem); background: var(--paper); }
+.results-card {
+    position: relative; overflow: hidden; display: grid; gap: 2.2rem; align-items: center;
+    padding: clamp(1.8rem, 5vw, 3.6rem); border-radius: var(--r); color: #fff;
+    background: radial-gradient(700px 420px at 12% 0%, rgba(23, 67, 214, .6), transparent 70%), linear-gradient(160deg, var(--royal-deep), var(--abyss));
+    box-shadow: 0 50px 100px -50px rgba(10, 31, 120, .7);
+}
+.results-copy { display: grid; gap: 1.1rem; justify-items: start; }
+.results-card .eyebrow { color: var(--mint); }
+.results-card .display { font-size: clamp(2rem, 5vw, 3.4rem); }
+.results-card .display em { color: var(--mint); }
+.results-card .sec-sub { color: rgba(255, 255, 255, .74); }
+.results-cta { display: grid; gap: 1rem; justify-items: start; padding: clamp(1.4rem, 3vw, 2rem); border-radius: 22px; background: rgba(255, 255, 255, .08); border: 1px solid var(--line-d); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.results-pin { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--mint); color: var(--ink); box-shadow: 0 0 0 8px rgba(111, 227, 193, .14); }
+.results-ask { font-family: var(--ff-d); font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.15; }
+.results-note { font-size: .78rem; color: rgba(255, 255, 255, .6); }
+
 /* ─────────────── 18 · FAQ ─────────────── */
 .faq { position: relative; padding: clamp(3rem, 6vw, 5rem) 0 clamp(5rem, 10vw, 8rem); background: var(--paper); }
 .faq-grid { display: grid; gap: 2.2rem; }
@@ -913,6 +931,8 @@ body.tone-dark #depth { color: #fff; }
 
     .faq-grid { grid-template-columns: .8fr 1.2fr; gap: 5rem; }
     .faq .sec-head { position: sticky; top: calc(var(--header-h) + 2rem); align-self: start; }
+
+    .results-card { grid-template-columns: 1.1fr .9fr; gap: 4rem; }
 
     .final-grid { grid-template-columns: 1fr 1fr; gap: 4rem; }
     .ft-top { grid-template-columns: 1.5fr 1fr 1fr; gap: 4rem; }

@@ -799,7 +799,7 @@ void main(){
     function initForm() {
         const form = $('#wa-form');
         if (!form) return;
-        const name = $('#f-name'), type = $('#f-type'), msg = $('#f-msg');
+        const name = $('#f-name'), type = $('#f-type'), msg = $('#f-msg'), prev = $('#f-prev');
         const btn = $('button[type="submit"]', form), label = $('span', btn);
         const original = label.textContent;
 
@@ -819,8 +819,9 @@ void main(){
             if (!type.value) { setErr(type, 'Elige el tipo de terapia que buscas.'); ok = false; }
             if (!ok) { (n.length < 2 ? name : type).focus(); return; }
 
-            const extra = msg.value.trim() ? ` Quisiera contarle: ${msg.value.trim()}.` : '';
-            const text = `Hola Dr. Joe, soy ${n}. Busco: ${type.value}.${extra} ¿Me comparte los horarios disponibles para mi primera sesión?`;
+            const extra = msg.value.trim() ? ` Motivo de consulta / lo que me motiva a pedir ayuda: ${msg.value.trim()}.` : '';
+            const before = prev.value.trim() ? ` Proceso psicológico previo (duración y por qué lo dejé): ${prev.value.trim()}.` : '';
+            const text = `Hola Dr. Joe, soy ${n}. Busco: ${type.value}.${extra}${before} ¿Me comparte los horarios disponibles para mi primera sesión?`;
             btn.classList.add('is-sent');
             label.textContent = 'Abriendo WhatsApp…';
             const win = window.open(waUrl(text), '_blank');
